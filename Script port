@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Error checking for input parameters
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <hostfile> <portfile>"
+    exit 1
+fi
+
+hostfile=$1
+portfile=$2
+
+# Check if hostfile exists
+if [ ! -f "$hostfile" ]; then
+    echo "Error: Host file '$hostfile' not found!"
+    exit 1
+fi
+
+# Check if portfile exists
+if [ ! -f "$portfile" ]; then
+    echo "Error: Port file '$portfile' not found!"
+    exit 1
+fi
+
+# CSV Output header
+echo "host,port,status" > scan_results.csv
+
+# Loop over each host and port
+for host in $(cat "$hostfile"); do
+    for port in $(cat "$portfile"); do
+        # Timeout of 1 second for each scan
+        timeout 1 bash -c "echo > /dev/tcp/$host/$port" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            echo "$host,$port,open" >> scan_results.csv
+        else
+            echo "$host,$port,closed" >> scan_results.csv
+        fi
+    done
+done
+
+# Display the result to the user
+cat scan_results.csv

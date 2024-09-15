@@ -1,10 +1,10 @@
 param (
-    [string]$networkPrefix,  # Network prefix like 192.168.3
-    [string]$dnsServer       # DNS server to use like 192.168.4.4
+    [string]$networkPrefix,  
+    [string]$dnsServer      
 )
 
 if (-not $networkPrefix -or -not $dnsServer) {
-    Write-Host "Usage: .\dns-resolver.ps1 <network_prefix> <dns_server>"
+    Write-Host "Usage: .\resolve-dns.ps1 <network_prefix> <dns_server>"
     exit
 }
 
@@ -14,6 +14,6 @@ if (-not $networkPrefix -or -not $dnsServer) {
         $result = Resolve-DnsName -DnsOnly $ip -Server $dnsServer -ErrorAction Stop
         $result | ForEach-Object { Write-Host "$ip $($_.NameHost)" }
     } catch {
-        # Optional: You could skip printing unresolved IPs if you want to mimic the output in your image.
+        
     }
 }

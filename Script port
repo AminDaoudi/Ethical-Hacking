@@ -18,16 +18,16 @@ if [ ! -f "$portfile" ]; then
     exit 1
 fi
 
-echo "host,port,status" > scan_results.csv
+echo "host,port,status" > portscanne2.ph
 
 for host in $(cat "$hostfile"); do
     for port in $(cat "$portfile"); do
         # Timeout of 1 second for each scan
         timeout 1 bash -c "echo > /dev/tcp/$host/$port" 2>/dev/null
         if [ $? -eq 0 ]; then
-            echo "$host,$port,open" >> scan_results.csv
+            echo "$host,$port,open" >> portscanner2.sh
         else
-            echo "$host,$port,closed" >> scan_results.csv
+            echo "$host,$port,closed" >> portscanner2.sh
         fi
     done
 done

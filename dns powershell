@@ -3,24 +3,17 @@ param (
     [string]$dnsServer       # DNS server to use like 192.168.4.4
 )
 
-# Check if both parameters are provided
 if (-not $networkPrefix -or -not $dnsServer) {
-    Write-Host "Usage: .\resolve-dns.ps1 -networkPrefix <network_prefix> -dnsServer <dns_server>"
+    Write-Host "Usage: .\dns-resolver.ps1 <network_prefix> <dns_server>"
     exit
 }
 
-# Loop through IP addresses 1 to 254 for the given network prefix
-for ($i = 1; $i -le 254; $i++) {
-    $ip = "$networkPrefix.$i"
-    Write-Host "Resolving IP $ip using DNS Server $dnsServer..."
-    
-    # Use Resolve-DnsName to perform the PTR query
+1..254 | ForEach-Object {
+    $ip = "$networkPrefix.$_"
     try {
         $result = Resolve-DnsName -DnsOnly $ip -Server $dnsServer -ErrorAction Stop
-        $result | ForEach-Object {
-            Write-Host "$($ip) resolves to $($_.NameHost)"
-        }
+        $result | ForEach-Object { Write-Host "$ip $($_.NameHost)" }
     } catch {
-        Write-Host "$ip could not be resolved."
+        # Optional: You could skip printing unresolved IPs if you want to mimic the output in your image.
     }
 }
